@@ -8,11 +8,28 @@
 #define DELIMETER " "
 #define MAX_SIZE 100
 #define END "\0"
+#define LIST_SIZE 5
 
 char parameter_strings[10][MAX_SIZE];
 
-void determine_command_type(){
+//void callback(char (*ptr)()){
+//	(*ptr)();
+//}
 
+char * determine_command_type(){
+	int i=0;
+	char* ret="system_commands";
+	char command_list[LIST_SIZE][10]={"cd","dir","history","findloc","exit"};
+
+	for(i=0;i!=LIST_SIZE;i++){
+		if(strcmp(parameter_strings[0],command_list[i])==0){
+			strcpy(ret,command_list[i]);
+			return ret;
+		}
+	}
+
+	//sprintf(ret,"system_commands");
+	return ret;
 }
 
 void take_command_from_user(char* input_string){
@@ -37,7 +54,8 @@ void parse_taking_command(char* input_string){
 int main(int argc, char* argv[])
 {
 	//int i=0;
-	char input_string[MAX_SIZE];
+	char input_string[MAX_SIZE], *ret;
+	//char (*ptr)();
 
 	//Take command from user
 	take_command_from_user(input_string);
@@ -46,7 +64,8 @@ int main(int argc, char* argv[])
 	parse_taking_command(input_string);
 
 	//Built-in commands or not
-	determine_command_type();
+	ret = determine_command_type();
+	//callback(ptr);
 
 //	for(i=0; strcmp(parameter_strings[i],END)!=0 ;i++)
 //		printf("\n%d text:%s",i+1,parameter_strings[i]);
