@@ -9,27 +9,54 @@
 #define DELIMETER " "
 #define MAX_SIZE 100
 #define END "\0"
-#define LIST_SIZE 5
+#define LIST_SIZE 6
 
 char parameter_strings[10][MAX_SIZE];
 
-//void callback(char (*ptr)()){
-//	(*ptr)();
-//}
+void system_command(){
+	printf("I am system_command.");
+}
 
-char * determine_command_type(){
+void cd(){
+	printf("I am cd.");
+}
+
+void dir(){
+	printf("I am dir.");
+}
+
+void History(){
+	printf("I am history.");
+}
+
+void findloc(){
+	printf("I am findloc.");
+}
+
+void exit2(){
+	printf("I am exit.");
+}
+
+void (*callback(int x)) (void){
+	void* array[LIST_SIZE]={system_command,cd,dir,History,findloc,exit2};
+	void* ret=NULL;
+
+	ret= array[x];
+	return ret;
+}
+
+int determine_command_type_index(){
 	int i=0;
-	char* ret="system_commands";
-	char command_list[LIST_SIZE][10]={"cd","dir","history","findloc","exit"};
+	int ret=0;
+	char command_list[LIST_SIZE][16]={"system_command","cd","dir","history","findloc","exit"};
 
 	for(i=0;i!=LIST_SIZE;i++){
 		if(strcmp(parameter_strings[0],command_list[i])==0){
-			strcpy(ret,command_list[i]);
+			ret= i;
 			return ret;
 		}
 	}
 
-	//sprintf(ret,"system_commands");
 	return ret;
 }
 
@@ -55,7 +82,9 @@ void parse_taking_command(char* input_string){
 int main(int argc, char* argv[])
 {
 	//int i=0;
-	char input_string[MAX_SIZE], *ret;
+	char input_string[MAX_SIZE];
+	int ret;
+	void (*pf)(void);
 	//char (*ptr)();
 
 	//Take command from user
@@ -65,8 +94,12 @@ int main(int argc, char* argv[])
 	parse_taking_command(input_string);
 
 	//Built-in commands or not
-	ret = determine_command_type();
-	//callback(ptr);
+	ret = determine_command_type_index();
+
+	//Call command function
+	pf=callback(ret);
+	if(pf!=NULL)
+		pf();
 
 //	for(i=0; strcmp(parameter_strings[i],END)!=0 ;i++)
 //		printf("\n%d text:%s",i+1,parameter_strings[i]);
