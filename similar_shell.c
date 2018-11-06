@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "shell_stm.h"
+#include <unistd.h>
 
 #define OK		0
 #define ERR 	1
 
-#define DELIMETER " "
+#define DELIMETER " \n"
 #define MAX_SIZE 100
 #define END "\0"
 #define LIST_SIZE 6
@@ -18,7 +19,24 @@ void system_command(){
 }
 
 void cd(){
-	printf("I am cd.");
+	char *argv2[3];
+	int ret;
+	argv2[0] = "ls";
+	argv2[1] = "-ltrh";
+	argv2[2] = NULL;
+
+	printf("\nI am cd.\n");
+
+	printf("\nparameter_strings[1]:%s:\n",parameter_strings[1]);
+
+	if(strcmp(parameter_strings[1],"")==0){
+		ret = chdir(getenv("HOME"));
+	}else{
+		ret = chdir(parameter_strings[1]);
+	}
+	printf("ret:%d",ret);
+
+	execvp("ls",argv2);
 }
 
 void dir(){
@@ -49,7 +67,7 @@ int determine_command_type_index(){
 	int i=0;
 	int ret=0;
 	char command_list[LIST_SIZE][16]={"system_command","cd","dir","history","findloc","exit"};
-
+	printf("parameter_strings[0]:%s:",parameter_strings[0]);
 	for(i=0;i!=LIST_SIZE;i++){
 		if(strcmp(parameter_strings[0],command_list[i])==0){
 			ret= i;
@@ -64,6 +82,10 @@ void take_command_from_user(char* input_string){
 	printf("myshell>");
 	fgets(input_string,MAX_SIZE,stdin);
 	fflush(stdin);
+
+	if (strlen (input_string) > 0)
+		if (input_string[strlen (input_string) - 1] == '\n')
+			input_string[strlen (input_string) - 1] = '\0';
 }
 
 void parse_taking_command(char* input_string){
@@ -76,7 +98,7 @@ void parse_taking_command(char* input_string){
 		str_ptr = strtok(NULL,DELIMETER);
 		i++;
 	}
-	parameter_strings[i][0] = '\0';
+	//parameter_strings[i][0] = '\0';
 }
 
 int main(int argc, char* argv[])
@@ -95,7 +117,7 @@ int main(int argc, char* argv[])
 
 	//Built-in commands or not
 	ret = determine_command_type_index();
-
+	printf("ret:%d",ret);
 	//Call command function
 	pf=callback(ret);
 	if(pf!=NULL)
