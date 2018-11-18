@@ -3,14 +3,18 @@ CC=gcc
 #Compiler parameters
 CFLAGS=-c -Wall
 
-all: similar_shell
+TARGET=similar_shell
+
+OBJ=similar_shell.o #queue.o
+
+all: $(TARGET)
 	
-similar_shell: similar_shell.o
-	$(CC) similar_shell.o -o similar_shell
+$(TARGET): $(OBJ)
+	$(CC) $(OBJ) -o $(TARGET)
 
-similar_shell.o: similar_shell.h similar_shell.c
-	$(CC) $(CFLAGS) similar_shell.c
-
+$(OBJ): similar_shell.h similar_shell.c queue.h queue.c
+	$(CC) $(CFLAGS) similar_shell.c queue.c
+	
 clean: 
-	rm -rf *o similar_shell
+	rm -rf *o $(TARGET)
 
