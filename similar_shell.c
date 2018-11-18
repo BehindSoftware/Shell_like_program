@@ -31,6 +31,7 @@ char * determine_command_type(){
 
 	//sprintf(ret,"system_commands");
 	return ret;
+
 }
 
 void take_command_from_user(char* input_string){
