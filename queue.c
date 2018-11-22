@@ -5,6 +5,9 @@
 #define OK		0
 #define ERR 	1
 
+TskNodePtr headPtr = NULL;
+TskNodePtr tailPtr = NULL;
+
 int Task_dequeue( TskNodePtr *headPtr, TskNodePtr *tailPtr, Tsk_node_s *node)
 {
 	TskNodePtr tempPtr;
@@ -51,19 +54,26 @@ void Task_enqueue(TskNodePtr *headPtr, TskNodePtr *tailPtr, Tsk_node_s *node)
 
 }
 
+void History_tasks(){
+	while(headPtr!=NULL){			//taking task nodes with dequeue from queue
+		Task_dequeue(&headPtr,&tailPtr,&task_node);
+		printf("\n[%d] %s",task_node.task_num,task_node.value);
+	}
+}
+
 void Task_queue(char* command_string){
 	//normalde global şimdilik local tanımlıyoruz.
 	int history_count=0;
 
 	task_node.task_num = history_count++;
-	//strcpy(task_node.value ,command_string);
+	strcpy(task_node.value ,command_string);
 
 	Task_enqueue(&headPtr,&tailPtr,&task_node);
 
 
-	while(headPtr!=NULL){			//taking task nodes with dequeue from queue
-		Task_dequeue(&headPtr,&tailPtr,&task_node);
-		printf("\n[%d] %s",task_node.task_num,task_node.value);
-	}
+//	while(headPtr!=NULL){			//taking task nodes with dequeue from queue
+//		Task_dequeue(&headPtr,&tailPtr,&task_node);
+//		printf("\n[%d] %s",task_node.task_num,task_node.value);
+//	}
 
 }

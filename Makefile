@@ -2,19 +2,20 @@
 CC=gcc
 #Compiler parameters
 CFLAGS=-c -Wall
-
+#CFLAGS   = -g -D__GNUEABI__ -fstack-protector-all -Wstack-protector -O3
 TARGET=similar_shell
 
-OBJ=similar_shell.o #queue.o
+OBJ=similar_shell.o queue.o
 
-all: $(TARGET)
-	
-$(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $(TARGET)
+all: similar_shell
 
-$(OBJ): similar_shell.h similar_shell.c queue.h queue.c
-	$(CC) $(CFLAGS) similar_shell.c queue.c
-	
-clean: 
-	rm -rf *o $(TARGET)
+clean:
+		rm -f *.o *~ similar_shell
 
+%.o: %.c %.h similar_shell.h
+		$(CC) $(CFLAGS) -c $<
+
+similar_shell: $(OBJ) 
+		$(CC) -O2 $(OBJ) -o similar_shell 
+		chmod 777 similar_shell
+		cp similar_shell /work/users/saydamb/similar_shell

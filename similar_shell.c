@@ -13,6 +13,7 @@
 
 #define DELIMETER " \n"
 #define PATH_DELIMETER ":"
+#define PIPE_DELIMETER "|"
 #define ELEMENT_SIZE 10
 #define MAX_SIZE 100
 #define END "\0"
@@ -24,9 +25,10 @@ char parameter_strings[ELEMENT_SIZE][MAX_SIZE];
 char paths[10][MAX_SIZE];
 char history_of_command[ELEMENT_SIZE][MAX_SIZE];
 char *argv2[1];
+char piped_string[64]="";
 
 int system_command_flag = ERR;
-
+void History_tasks();
 //koruma yapan fonksiyon eklenicek command alanalr için ve boşluk için
 
 void parse_path(char* path_for_findloc){
@@ -84,14 +86,8 @@ void dir(){
 
 void History(){
 	//int i=0;
-	//printf("I am history.");
-//	for(i=0;i<history_count;i++)
-//		printf("[%d] %s",i+1,history_of_command[i]);
-
-//	while(headPtr!=NULL){			//taking task nodes with dequeue from queue
-//		Task_dequeue(&headPtr,&tailPtr,&task_node);
-//		printf("\n[%d] %s",task_node.task_num,task_node.value);
-//	}
+	printf("I am history.");
+	//History_tasks();
 
 }
 
@@ -144,26 +140,40 @@ int determine_command_type_index(){
 }
 
 void take_command_from_user(char* input_string){
-	printf("myshell>");
-	fgets(input_string,MAX_SIZE,stdin);
-	fflush(stdin);
+
+	if(strcmp(piped_string,"")==0){
+		printf("myshell>");
+		fgets(input_string,MAX_SIZE,stdin);
+		fflush(stdin);
+	}else{
+		strcpy(input_string,piped_string);
+		strcpy(piped_string,"");
+	}
 
 	if (strlen (input_string) > 0)
 		if (input_string[strlen (input_string) - 1] == '\n')
 			input_string[strlen (input_string) - 1] = '\0';
+
 }
 
 void parse_taking_command(char* input_string){
 	int i=0;
-	char *str_ptr;
+	char *str_ptr, *ret;
 
-	str_ptr = strtok(input_string,DELIMETER);
+	//If input_string has pipe
+	ret = strstr(input_string,PIPE_DELIMETER);
+
+	if(!(ret == NULL)){
+		strcpy(piped_string,ret+2);		//assing it to piped_string (ret+2 maybe correct from memmove)
+	}
+	strtok(input_string,PIPE_DELIMETER);		//split input_string to take first part of it.
+
+	str_ptr = strtok(input_string,DELIMETER);	//DO TEST !!!!
 	while(str_ptr != NULL){
 		strcpy(parameter_strings[i],str_ptr);
 		str_ptr = strtok(NULL,DELIMETER);
 		i++;
 	}
-	//parameter_strings[i][0] = '\0';
 }
 
 int main(int argc, char* argv[])
@@ -211,7 +221,9 @@ int main(int argc, char* argv[])
 				}
 				exit(EXIT_SUCCESS);
 			}else{
-				wait(NULL);
+				if(!(strcmp(parameter_strings[1],"&")==0))
+					wait(NULL);
+
 				system_command_flag = ERR;
 			}
 		}

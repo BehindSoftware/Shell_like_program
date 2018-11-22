@@ -12,8 +12,8 @@ struct tsk_node_s {
 typedef struct tsk_node_s Tsk_node_s;
 typedef Tsk_node_s *TskNodePtr;
 
-TskNodePtr headPtr = NULL;
-TskNodePtr tailPtr = NULL;
+//TskNodePtr headPtr = NULL;
+//TskNodePtr tailPtr = NULL;
 Tsk_node_s task_node;
 
 /* Task queue functions */
